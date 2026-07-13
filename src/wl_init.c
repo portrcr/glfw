@@ -244,10 +244,7 @@ static void libdecorReadyCallback(void* userData,
                                   uint32_t time)
 {
     _glfw.wl.libdecor.ready = GLFW_TRUE;
-
-    assert(_glfw.wl.libdecor.callback == callback);
-    wl_callback_destroy(_glfw.wl.libdecor.callback);
-    _glfw.wl.libdecor.callback = NULL;
+    wl_callback_destroy(callback);
 }
 
 static const struct wl_callback_listener libdecorReadyListener =
@@ -801,6 +798,8 @@ int _glfwInitWayland(void)
             _glfwPlatformGetModuleSymbol(_glfw.wl.libdecor.handle, "libdecor_frame_unset_capabilities");
         _glfw.wl.libdecor.libdecor_frame_set_visibility_ = (PFN_libdecor_frame_set_visibility)
             _glfwPlatformGetModuleSymbol(_glfw.wl.libdecor.handle, "libdecor_frame_set_visibility");
+        _glfw.wl.libdecor.libdecor_frame_is_visible_ = (PFN_libdecor_frame_is_visible)
+            _glfwPlatformGetModuleSymbol(_glfw.wl.libdecor.handle, "libdecor_frame_is_visible");
         _glfw.wl.libdecor.libdecor_frame_get_xdg_toplevel_ = (PFN_libdecor_frame_get_xdg_toplevel)
             _glfwPlatformGetModuleSymbol(_glfw.wl.libdecor.handle, "libdecor_frame_get_xdg_toplevel");
         _glfw.wl.libdecor.libdecor_configuration_get_content_size_ = (PFN_libdecor_configuration_get_content_size)
@@ -832,6 +831,7 @@ int _glfwInitWayland(void)
             !_glfw.wl.libdecor.libdecor_frame_set_capabilities_ ||
             !_glfw.wl.libdecor.libdecor_frame_unset_capabilities_ ||
             !_glfw.wl.libdecor.libdecor_frame_set_visibility_ ||
+            !_glfw.wl.libdecor.libdecor_frame_is_visible_ ||
             !_glfw.wl.libdecor.libdecor_frame_get_xdg_toplevel_ ||
             !_glfw.wl.libdecor.libdecor_configuration_get_content_size_ ||
             !_glfw.wl.libdecor.libdecor_configuration_get_window_state_ ||
@@ -881,10 +881,8 @@ int _glfwInitWayland(void)
             libdecor_dispatch(_glfw.wl.libdecor.context, 0);
 
             // Create sync point to "know" when libdecor is ready for use
-            _glfw.wl.libdecor.callback = wl_display_sync(_glfw.wl.display);
-            wl_callback_add_listener(_glfw.wl.libdecor.callback,
-                                     &libdecorReadyListener,
-                                     NULL);
+            struct wl_callback* callback = wl_display_sync(_glfw.wl.display);
+            wl_callback_add_listener(callback, &libdecorReadyListener, NULL);
         }
     }
 

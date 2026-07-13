@@ -129,6 +129,8 @@ information on what to include when reporting a bug.
  - [Win32] Removed support for Windows XP and Vista (#2505)
  - [Cocoa] Added `QuartzCore` framework as link-time dependency
  - [Cocoa] Removed support for OS X 10.10 Yosemite and earlier (#2506)
+ - [Cocoa] Bugfix: Cmd+Period, Ctrl+Tab and Ctrl+Esc key events were not emitted
+   (#1362,#2278)
  - [Wayland] Bugfix: The fractional scaling related objects were not destroyed
  - [Wayland] Bugfix: `glfwInit` would segfault on compositor with no seat (#2517)
  - [Wayland] Bugfix: A drag entering a non-GLFW surface could cause a segfault
@@ -155,6 +157,10 @@ information on what to include when reporting a bug.
  - [Wayland] Bugfix: Mouse wheel scroll distance was incorrect on some compositors
  - [Wayland] Bugfix: `glfwSwapBuffers` would halt with nonzero swap interval when window
    was suspended (#1350,#2582,#2640,#2719,#2723,#2800,#2827)
+ - [Wayland] Bugfix: `glfwPostEmptyEvent` would leak a callback proxy (#2836)
+ - [Wayland] Bugfix: `glfwHideWindow` did not always send its request immediately
+ - [Wayland] Bugfix: Some event types were not always processed by `glfwPollEvents` or
+   `glfwWait*Events` (#2793,#2795)
  - [X11] Bugfix: Running without a WM could trigger an assert (#2593,#2601,#2631)
  - [X11] Bugfix: Occasional crash when an idle display awakes (#2766) 
  - [X11] Bugfix: Prevent BadWindow when creating small windows with a content scale
