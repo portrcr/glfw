@@ -1,11 +1,11 @@
 project "GLFW"
 	kind "StaticLib"
 	language "C"
-	staticruntime "off"
+	-- staticruntime "off"
 	warnings "off"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+	targetdir (TargetDir)
+	objdir (ObjDir)
 
 	files
 	{
@@ -27,10 +27,40 @@ project "GLFW"
 		"src/window.c",
 	}
 
+	includedirs
+    {
+        "include/"
+    }
+
+	filter "system:windows"
+		systemversion "latest"
+		staticruntime "off"
+
+		files
+		{
+			"src/win32_init.c",
+			"src/win32_joystick.c",
+			"src/win32_module.c",
+			"src/win32_monitor.c",
+			"src/win32_time.c",
+			"src/win32_thread.c",
+			"src/win32_window.c",
+			"src/wgl_context.c",
+			"src/egl_context.c",
+			"src/osmesa_context.c"
+		}
+
+		defines 
+		{ 
+			"_GLFW_WIN32",
+			"_CRT_SECURE_NO_WARNINGS"
+		}
+
 	filter "system:linux"
 		pic "On"
 
 		systemversion "latest"
+		staticruntime "On"
 		
 		files
 		{
@@ -75,28 +105,7 @@ project "GLFW"
 			"_GLFW_COCOA"
 		}
 
-	filter "system:windows"
-		systemversion "latest"
-
-		files
-		{
-			"src/win32_init.c",
-			"src/win32_joystick.c",
-			"src/win32_module.c",
-			"src/win32_monitor.c",
-			"src/win32_time.c",
-			"src/win32_thread.c",
-			"src/win32_window.c",
-			"src/wgl_context.c",
-			"src/egl_context.c",
-			"src/osmesa_context.c"
-		}
-
-		defines 
-		{ 
-			"_GLFW_WIN32",
-			"_CRT_SECURE_NO_WARNINGS"
-		}
+		
 
 	filter "configurations:Debug"
 		runtime "Debug"
@@ -106,7 +115,9 @@ project "GLFW"
 		runtime "Debug"
 		symbols "on"
 		sanitize { "Address" }
-		flags { "NoRuntimeChecks", "NoIncrementalLink" }
+		
+		runtimechecks "Off"
+		incrementallink "Off"
 
 	filter "configurations:Release"
 		runtime "Release"
